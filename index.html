@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dúos — Encuentra parejas de vuestra generación</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:       #F7F2EC;
+      --cream-dark:  #EDE5D8;
+      --brown-light: #C4A882;
+      --brown:       #8B6343;
+      --brown-dark:  #5C3D1E;
+      --blue:        #2C4A7C;
+      --blue-mid:    #3D6494;
+      --blue-light:  #D6E4F7;
+      --blue-pale:   #EBF2FB;
+      --white:       #FFFFFF;
+      --text:        #2A1F14;
+      --text-mid:    #6B5744;
+      --text-muted:  #9B8878;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 2.5rem;
+      background: rgba(247,242,236,0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--cream-dark);
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .logo span { color: var(--brown); }
+
+    .nav-actions { display: flex; gap: 0.65rem; align-items: center; }
+
+    .btn-ghost {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.875rem;
+      color: var(--text-mid);
+      background: none;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-ghost:hover { background: var(--cream-dark); color: var(--text); }
+
+    .btn-nav {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--white);
+      background: var(--blue);
+      border: none;
+      padding: 0.5rem 1.25rem;
+      border-radius: 100px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-nav:hover { background: var(--blue-mid); }
+
+    /* HERO */
+    .hero-wrap { padding: 0 2.5rem; max-width: 1200px; margin: 0 auto; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 5rem;
+      padding: 8rem 0 5rem;
+    }
+
+    .tag-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--brown);
+      margin-bottom: 1.5rem;
+    }
+    .tag-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brown-light); }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 4.5vw, 4rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    h1 em { font-style: italic; color: var(--blue); }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.75;
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+    }
+
+    .age-widget {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 20px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 24px rgba(44,74,124,0.07);
+    }
+
+    .age-widget-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.1rem;
+    }
+
+    .age-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .age-label { font-size: 0.85rem; color: var(--text-mid); min-width: 90px; }
+
+    .age-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      outline: none;
+    }
+    .age-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--blue);
+      cursor: pointer;
+      border: 2px solid var(--white);
+      box-shadow: 0 1px 6px rgba(44,74,124,0.3);
+    }
+
+    .age-val { font-size: 0.88rem; font-weight: 500; color: var(--blue); min-width: 52px; text-align: right; }
+
+    .btn-search {
+      width: 100%;
+      font-family: 'Jost', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--white);
+      background: var(--blue);
+      border: none;
+      padding: 0.85rem;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(44,74,124,0.2);
+    }
+    .btn-search:hover { background: var(--blue-mid); transform: translateY(-2px); }
+
+    .hero-note { font-size: 0.78rem; color: var(--text-muted); text-align: center; }
+
+    .initial-circle {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 400;
+      border: 2px solid var(--white);
+      margin-right: -10px;
+      flex-shrink: 0;
+    }
+    .initial-circle:last-child { margin-right: 0; }
+
+    .demo-initial {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .hero-cta-block { display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.25rem; }
+
+    .btn-hero-main {
+      font-family: 'Jost', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--white);
+      background: var(--blue);
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 20px rgba(44,74,124,0.2);
+    }
+    .btn-hero-main:hover { background: var(--blue-mid); transform: translateY(-2px); }
+
+    .btn-hero-sec {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--brown);
+      background: none;
+      border: 1.5px solid var(--brown-light);
+      padding: 0.75rem 2rem;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-hero-sec:hover { border-color: var(--brown); color: var(--brown-dark); }
+
+    /* HERO RIGHT */
+    .profile-stack { position: relative; max-width: 360px; margin-left: auto; }
+
+    .profile-card-back {
+      position: absolute;
+      width: 90%; height: 100%;
+      background: var(--blue-pale);
+      border: 1px solid var(--blue-light);
+      border-radius: 22px;
+      top: -14px; right: -12px;
+      transform: rotate(3.5deg);
+      z-index: 0;
+    }
+
+    .profile-card {
+      position: relative; z-index: 1;
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 22px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 40px rgba(91,61,30,0.1);
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .pc-top {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+
+    .duo-avatars { display: flex; }
+    .duo-avatars img {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--white);
+      margin-right: -10px;
+    }
+    .duo-avatars img:last-child { margin-right: 0; }
+
+    .pc-names { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--text); }
+    .pc-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 1px; }
+
+    .age-badge {
+      margin-left: auto;
+      background: var(--blue-pale);
+      color: var(--blue);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.25rem 0.65rem;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    .pc-interests { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.85rem; }
+
+    .chip {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      background: var(--cream);
+      color: var(--text-mid);
+      border: 1px solid var(--cream-dark);
+    }
+    .chip-brown { background: #F2E8DC; color: var(--brown); border-color: #DDD0BC; }
+
+    .pc-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+
+    .pc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+    .pc-btn {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      border: 1.5px solid var(--cream-dark);
+      background: none;
+      color: var(--text-mid);
+    }
+    .pc-btn:hover { background: var(--cream); }
+    .pc-btn.pc-connect { background: var(--brown); color: var(--white); border-color: var(--brown); }
+    .pc-btn.pc-connect:hover { background: var(--brown-dark); }
+
+    .match-badge {
+      position: absolute;
+      bottom: -16px; left: 24px;
+      background: var(--brown);
+      color: var(--white);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(91,61,30,0.25);
+      z-index: 2;
+    }
+
+    /* STATS */
+    .wave-divider { background: var(--blue); padding: 3rem 2.5rem; margin-top: 2rem; }
+
+    .wave-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      gap: 0;
+      text-align: center;
+      align-items: center;
+    }
+
+    .stat-n {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1;
+    }
+    .stat-l { font-size: 0.72rem; font-weight: 300; color: rgba(255,255,255,0.45); margin-top: 0.3rem; letter-spacing: 0.05em; text-transform: uppercase; }
+    .stat-sep { width: 1px; height: 48px; background: rgba(255,255,255,0.15); margin: 0 2rem; }
+
+    /* SECTIONS */
+    .section { padding: 6rem 2.5rem; max-width: 1200px; margin: 0 auto; }
+
+    .eyebrow { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brown); margin-bottom: 0.75rem; }
+
+    .sec-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.9rem, 3vw, 2.8rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 1rem;
+      max-width: 500px;
+    }
+    .sec-title em { font-style: italic; color: var(--blue); }
+
+    .sec-sub {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.75;
+      max-width: 430px;
+      margin-bottom: 3.5rem;
+    }
+
+    .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+    .how-card {
+      padding: 2rem;
+      border-radius: 20px;
+      border: 1px solid var(--cream-dark);
+      background: var(--white);
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .how-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue), var(--brown-light));
+    }
+    .how-card:hover { box-shadow: 0 10px 36px rgba(44,74,124,0.1); transform: translateY(-4px); }
+
+    .how-num { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 400; color: var(--cream-dark); line-height: 1; margin-bottom: 1.25rem; }
+    .how-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 400; color: var(--text); margin-bottom: 0.6rem; }
+    .how-desc { font-size: 0.875rem; font-weight: 300; color: var(--text-muted); line-height: 1.7; }
+
+    /* FOR WHOM */
+    .for-section { background: var(--blue); padding: 5rem 2.5rem; }
+    .for-inner { max-width: 1200px; margin: 0 auto; }
+    .for-inner .eyebrow { color: var(--brown-light); }
+    .for-inner .sec-title { color: var(--white); max-width: 100%; }
+    .for-inner .sec-title em { color: var(--brown-light); }
+
+    .age-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 3rem; }
+
+    .age-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: background 0.2s;
+    }
+    .age-card:hover { background: rgba(255,255,255,0.12); }
+
+    .age-card-range { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 400; color: var(--brown-light); margin-bottom: 0.5rem; }
+    .age-card-title { font-size: 0.9rem; font-weight: 500; color: var(--white); margin-bottom: 0.75rem; }
+    .age-card-desc { font-size: 0.82rem; font-weight: 300; color: rgba(255,255,255,0.5); line-height: 1.65; }
+
+    .age-card-examples { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 1rem; }
+    .age-ex { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 100px; background: rgba(196,168,130,0.15); color: var(--brown-light); border: 1px solid rgba(196,168,130,0.25); }
+
+    /* FEATURES */
+    .features { padding: 5rem 2.5rem; max-width: 1200px; margin: 0 auto; }
+
+    .feat-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.25rem; align-items: start; }
+
+    .feat-big { background: var(--brown-dark); border-radius: 24px; padding: 2.5rem; grid-row: span 2; }
+
+    .feat-big-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 400; color: var(--white); line-height: 1.2; margin-bottom: 0.75rem; }
+    .feat-big-title em { font-style: italic; color: var(--brown-light); }
+    .feat-big-desc { font-size: 0.875rem; font-weight: 300; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 2rem; }
+
+    .demo-search { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 1.25rem; }
+    .demo-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .demo-label { font-size: 0.72rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; }
+    .demo-val { font-size: 0.85rem; font-weight: 500; color: var(--brown-light); }
+    .demo-bar-track { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 1.25rem; }
+    .demo-bar-fill { height: 4px; background: linear-gradient(90deg, var(--blue-light), var(--brown-light)); border-radius: 2px; width: 65%; }
+    .demo-results { display: flex; flex-direction: column; gap: 0.5rem; }
+    .demo-result-row { display: flex; align-items: center; gap: 0.65rem; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 0.6rem 0.75rem; }
+    .demo-avatar { width: 28px; height: 28px; border-radius: 50%; }
+    .demo-rname { font-size: 0.78rem; color: rgba(255,255,255,0.7); flex: 1; }
+    .demo-rage { font-size: 0.7rem; color: rgba(255,255,255,0.35); }
+
+    .feat-small {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 20px;
+      padding: 1.75rem;
+      transition: box-shadow 0.2s;
+    }
+    .feat-small:hover { box-shadow: 0 6px 24px rgba(91,61,30,0.08); }
+
+    .feat-icon { font-size: 1.4rem; margin-bottom: 0.85rem; display: block; }
+    .feat-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 400; color: var(--text); margin-bottom: 0.45rem; }
+    .feat-desc { font-size: 0.82rem; font-weight: 300; color: var(--text-muted); line-height: 1.65; }
+
+    /* TESTIMONIALS */
+    .test-section { background: var(--cream-dark); padding: 5rem 2.5rem; }
+    .test-inner { max-width: 1200px; margin: 0 auto; }
+
+    .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 3rem; }
+
+    .test-card { background: var(--white); border-radius: 20px; padding: 1.75rem; border: 1px solid rgba(139,99,67,0.12); }
+    .test-stars { color: var(--brown); font-size: 0.9rem; margin-bottom: 1rem; letter-spacing: 2px; }
+    .test-q { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-style: italic; line-height: 1.7; color: var(--text); margin-bottom: 1.25rem; }
+    .test-who { display: flex; align-items: center; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid var(--cream-dark); }
+    .test-av { width: 34px; height: 34px; border-radius: 50%; }
+    .test-name { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+    .test-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* CTA */
+    .cta-section { padding: 7rem 2.5rem; text-align: center; }
+    .cta-inner { max-width: 600px; margin: 0 auto; }
+
+    .cta-h { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 400; line-height: 1.15; color: var(--text); margin-bottom: 1.25rem; }
+    .cta-h em { font-style: italic; color: var(--brown); }
+    .cta-sub { font-size: 1rem; font-weight: 300; color: var(--text-muted); line-height: 1.7; margin-bottom: 2.5rem; }
+
+    .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    .btn-cta-main {
+      font-family: 'Jost', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--white);
+      background: var(--blue);
+      border: none;
+      padding: 0.9rem 2.25rem;
+      border-radius: 100px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(44,74,124,0.2);
+    }
+    .btn-cta-main:hover { background: var(--blue-mid); transform: translateY(-2px); }
+
+    .btn-cta-sec {
+      font-family: 'Jost', sans-serif;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--brown);
+      background: none;
+      border: 1.5px solid var(--brown-light);
+      padding: 0.9rem 2.25rem;
+      border-radius: 100px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-cta-sec:hover { border-color: var(--brown); color: var(--brown-dark); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--cream-dark);
+      padding: 1.75rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--blue); text-decoration: none; }
+    .footer-logo span { color: var(--brown); }
+    .footer-copy { font-size: 0.75rem; font-weight: 300; color: var(--text-muted); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    .ani { opacity: 0; animation: fadeUp 0.7s ease forwards; }
+    .d1 { animation-delay: 0.08s; }
+    .d2 { animation-delay: 0.2s; }
+    .d3 { animation-delay: 0.34s; }
+    .d4 { animation-delay: 0.48s; }
+
+
+    /* TICKER */
+    .ticker-wrap {
+      background: var(--blue);
+      padding: 1.1rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-top: 2rem;
+    }
+
+    .ticker-track {
+      display: inline-block;
+      animation: ticker 30s linear infinite;
+    }
+
+    .ticker-item {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.9);
+      padding: 0 0.5rem;
+      font-style: italic;
+    }
+
+    .ticker-dot {
+      font-size: 1rem;
+      color: var(--brown-light);
+      padding: 0 0.25rem;
+    }
+
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-wrap:hover .ticker-track {
+      animation-play-state: paused;
+    }
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      nav { padding: 1rem 1.25rem; }
+      .hero { grid-template-columns: 1fr; padding: 7rem 0 3rem; gap: 3rem; }
+      .hero-sub { max-width: 100%; }
+      .hero-right { display: none; }
+      .wave-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .stat-sep { display: none; }
+      .section { padding: 4rem 1.5rem; }
+      .how-grid { grid-template-columns: 1fr; }
+      .age-cards { grid-template-columns: 1fr; }
+      .feat-grid { grid-template-columns: 1fr; }
+      .feat-big { grid-row: span 1; }
+      .test-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 0.6rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="logo">Dú<span>os</span></a>
+    <div class="nav-actions">
+      <a href="login.html" class="btn-ghost">Entrar</a>
+      <a href="register.html" class="btn-nav">Registrarse</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero-wrap">
+    <div class="hero">
+      <div class="hero-left">
+        <div class="tag-line ani d1"><span class="tag-dot"></span>Comunidad privada · 47 a 62 años</div>
+        <h1 class="ani d2">La comunidad<br />de parejas de Madrid<br />de <em>47 a 62 años</em></h1>
+        <p class="hero-sub ani d3">Una comunidad para parejas de entre 47 y 62 años. Entráis, conocéis a otras parejas afines de la Comunidad de Madrid y a compartir buenos momentos juntos.</p>
+
+        <div class="hero-cta-block ani d4">
+          <a href="register.html" class="btn-hero-main">Unirse a la comunidad →</a>
+          <a href="login.html" class="btn-hero-sec">Ya tenemos cuenta</a>
+        </div>
+        <p class="hero-note ani d4">Comunidad cerrada · Solo parejas de 47–62 años · Acceso gratuito</p>
+      </div>
+
+      <div class="hero-right ani d3">
+        <div class="profile-stack">
+          <div class="profile-card-back"></div>
+          <div class="profile-card">
+            <div class="pc-top">
+              <div class="duo-avatars">
+                <div class="initial-circle" style="background:#D6E4F7;color:#2C4A7C;">M</div>
+                <div class="initial-circle" style="background:#F2E8DC;color:#8B6343;">C</div>
+              </div>
+              <div>
+                <div class="pc-names">Miguel & Carmen</div>
+                <div class="pc-meta">📍 Madrid · 51 y 49 años</div>
+              </div>
+              <div class="age-badge">47–60</div>
+            </div>
+            <div class="pc-interests">
+              <span class="chip chip-brown">Senderismo</span>
+              <span class="chip">Gastronomía</span>
+              <span class="chip">Viajes</span>
+              <span class="chip">Cine</span>
+            </div>
+            <p class="pc-desc">Llevamos años juntos y nos encanta ampliar nuestro círculo de amigos. Buscamos parejas con ganas de quedar, proponer planes y disfrutar de buena compañía por Madrid.</p>
+            <div class="pc-actions">
+              <button class="pc-btn">Ver perfil</button>
+              <button class="pc-btn pc-connect">Conectar</button>
+            </div>
+          </div>
+          <div class="match-badge">✓ Coincide con tu búsqueda</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-track">
+      <span class="ticker-item">Teatro</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Senderismo</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Musicales</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Monólogos</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Excursiones</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Planes de fin de semana</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Museos</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Exposiciones</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Viajes</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Gastronomía</span>
+      <span class="ticker-dot">·</span>
+      <!-- repeat for seamless loop -->
+      <span class="ticker-item">Teatro</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Senderismo</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Musicales</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Monólogos</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Excursiones</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Planes de fin de semana</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Museos</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Exposiciones</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Viajes</span>
+      <span class="ticker-dot">·</span>
+      <span class="ticker-item">Gastronomía</span>
+      <span class="ticker-dot">·</span>
+    </div>
+  </div>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="section">
+    <div class="eyebrow">Cómo funciona</div>
+    <h2 class="sec-title">Tan sencillo como quedar con amigos</h2>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">01</div>
+        <div class="how-title">Registraos como pareja</div>
+        <p class="how-desc">Cread un perfil conjunto con vuestros nombres, edades, ciudad e intereses. Elegid un avatar y contad quiénes sois en dos líneas.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">02</div>
+        <div class="how-title">Descubrid si es vuestro sitio</div>
+        <p class="how-desc">Echad un vistazo a los perfiles de la comunidad. Leed qué tipo de planes se proponen, qué parejas hay y decidid si el grupo es lo que estabais buscando.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">03</div>
+        <div class="how-title">Conectad y quedáis</div>
+        <p class="how-desc">Enviad una solicitud, chatead en privado si os aceptan, y organizad vuestro primer plan juntos. Lo demás ya viene solo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-inner">
+      <h2 class="cta-h">¿Tenéis entre 47 y 62 años<br />y vivís en Madrid?<br /><em>Vuestro sitio está aquí</em></h2>
+      <p class="cta-sub">Registraos, completad vuestro perfil de pareja y entrad directamente a la comunidad. Ya hay parejas esperando conoceros.</p>
+      <div class="cta-btns">
+        <a href="register.html" class="btn-cta-main">Crear nuestro perfil</a>
+        <a href="login.html" class="btn-cta-sec">Ya tenemos cuenta</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="index.html" class="footer-logo">Dú<span>os</span></a>
+    <p class="footer-copy">© 2025 Dúos · Directorio privado para parejas</p>
+  </footer>
+
+
+
+</body>
+</html>

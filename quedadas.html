@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dúos — Quedadas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:       #F7F2EC;
+      --cream-dark:  #EDE5D8;
+      --brown-light: #C4A882;
+      --brown:       #8B6343;
+      --brown-dark:  #5C3D1E;
+      --blue:        #2C4A7C;
+      --blue-mid:    #3D6494;
+      --blue-light:  #D6E4F7;
+      --blue-pale:   #EBF2FB;
+      --white:       #FFFFFF;
+      --text:        #2A1F14;
+      --text-mid:    #6B5744;
+      --text-muted:  #9B8878;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 2.5rem;
+      background: rgba(247,242,236,0.96);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--cream-dark);
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .logo span { color: var(--brown); }
+
+    .nav-links { display: flex; gap: 0.5rem; align-items: center; }
+
+    .nav-link {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.4rem 0.85rem;
+      border-radius: 100px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-link:hover { background: var(--cream-dark); color: var(--text); }
+    .nav-link.active { color: var(--blue); font-weight: 500; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2.5rem 2rem;
+    }
+
+    .page-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--brown);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .page-title em { font-style: italic; color: var(--blue); }
+
+    .page-sub {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 520px;
+    }
+
+    /* ── FILTER TABS ── */
+    .filter-bar {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2.5rem 2rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      border: 1.5px solid var(--cream-dark);
+      background: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { border-color: var(--brown-light); color: var(--brown); }
+    .filter-btn.active { background: var(--blue); color: var(--white); border-color: var(--blue); }
+
+    /* ── GRID ── */
+    .events-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2.5rem 5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    /* ── EVENT CARD ── */
+    .event-card {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 22px;
+      overflow: hidden;
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .event-card:hover {
+      box-shadow: 0 10px 36px rgba(44,74,124,0.1);
+      transform: translateY(-3px);
+    }
+
+    /* Color stripe on top */
+    .card-stripe {
+      height: 4px;
+    }
+    .stripe-blue   { background: linear-gradient(90deg, var(--blue), var(--blue-light)); }
+    .stripe-brown  { background: linear-gradient(90deg, var(--brown), var(--brown-light)); }
+    .stripe-purple { background: linear-gradient(90deg, #6B4D8B, #C4A8D4); }
+
+    .card-body { padding: 1.5rem 1.75rem; }
+
+    /* Date badge */
+    .date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: var(--blue-pale);
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+    .date-badge.past {
+      color: var(--text-muted);
+      background: var(--cream);
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+
+    /* Stops / agenda */
+    .stops { display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.25rem; }
+
+    .stop {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+    }
+
+    .stop-time-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+      width: 40px;
+    }
+
+    .stop-time {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--blue);
+      background: var(--blue-pale);
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .stop-line {
+      width: 1px;
+      flex: 1;
+      min-height: 16px;
+      background: var(--cream-dark);
+      margin-top: 4px;
+    }
+
+    .stop-content { flex: 1; padding-bottom: 0.25rem; }
+
+    .stop-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .stop-detail {
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .stop-detail a {
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 0.72rem;
+    }
+    .stop-detail a:hover { text-decoration: underline; }
+
+    .stop-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.4rem;
+    }
+
+    .stop-chip {
+      font-size: 0.68rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 100px;
+      border: 1px solid var(--cream-dark);
+      color: var(--text-mid);
+      background: var(--cream);
+    }
+    .stop-chip.price   { color: var(--brown); background: #F2E8DC; border-color: #DDD0BC; }
+    .stop-chip.metro   { color: var(--blue);  background: var(--blue-pale); border-color: var(--blue-light); }
+    .stop-chip.parking { color: var(--success, #2E7D5E); background: #EAF5F0; border-color: #B8DDD0; }
+
+    /* Attendees section */
+    .attendees {
+      border-top: 1px solid var(--cream-dark);
+      padding-top: 1.1rem;
+      margin-top: 1.1rem;
+    }
+
+    .attendees-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .attendee-group { margin-bottom: 0.75rem; }
+
+    .attendee-group:last-child { margin-bottom: 0; }
+
+    .attendee-group-name {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--brown);
+      margin-bottom: 0.3rem;
+    }
+
+    .attendee-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .attendee-pill {
+      font-size: 0.72rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 100px;
+      background: var(--cream);
+      border: 1px solid var(--cream-dark);
+      color: var(--text-mid);
+    }
+
+    /* Past event overlay */
+    .event-card.past .card-body { opacity: 0.75; }
+
+    .past-tag {
+      display: inline-flex;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--cream);
+      border: 1px solid var(--cream-dark);
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.25rem; }
+      .page-header { padding: 2rem 1.25rem 1.5rem; }
+      .filter-bar { padding: 0 1.25rem 1.5rem; }
+      .events-grid { padding: 0 1.25rem 3rem; grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="logo">Dú<span>os</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Inicio</a>
+      <a href="quedadas.html" class="nav-link active">Quedadas</a>
+      <a href="login.html" class="nav-link">Entrar</a>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-eyebrow">Comunidad Dúos · Madrid</div>
+    <h1 class="page-title">Nuestras <em>quedadas</em></h1>
+    <p class="page-sub">Planes propuestos por el grupo. Museos, conciertos, cenas, karaokes… todo lo que compartimos juntos.</p>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filtrar('all', this)">Todas</button>
+    <button class="filter-btn" onclick="filtrar('proxima', this)">Próximas</button>
+    <button class="filter-btn" onclick="filtrar('pasada', this)">Pasadas</button>
+  </div>
+
+  <!-- GRID DE EVENTOS -->
+  <div class="events-grid" id="events-grid">
+
+    <!-- ── EVENTO 1: TRIPLE QUEDADA ── -->
+    <div class="event-card proxima">
+      <div class="card-stripe stripe-blue"></div>
+      <div class="card-body">
+        <div class="date-badge">Viernes 11 de abril</div>
+        <div class="card-title">Propuesta triple quedada</div>
+        <div class="card-subtitle">Nuevo experimento — tres paradas en una tarde</div>
+
+        <div class="stops">
+
+          <div class="stop">
+            <div class="stop-time-col">
+              <div class="stop-time">17:30</div>
+              <div class="stop-line"></div>
+            </div>
+            <div class="stop-content">
+              <div class="stop-name">Legends: La casa del fútbol</div>
+              <div class="stop-detail">
+                Museo de La Liga · Carrera de San Jerónimo, 2
+                <br/>
+                <a href="https://tickets.legendsmuseo.com" target="_blank">↗ Comprar entradas</a>
+              </div>
+              <div class="stop-chips">
+                <span class="stop-chip price">30 €/persona</span>
+                <span class="stop-chip">~2 horas</span>
+                <span class="stop-chip metro">Metro: Sol</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stop">
+            <div class="stop-time-col">
+              <div class="stop-time">20:30</div>
+              <div class="stop-line"></div>
+            </div>
+            <div class="stop-content">
+              <div class="stop-name">El Recuerdo</div>
+              <div class="stop-detail">C/ Comandante Zorita, 4 · A picar algo</div>
+              <div class="stop-chips">
+                <span class="stop-chip metro">Metro: Nuevos Ministerios</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stop">
+            <div class="stop-time-col">
+              <div class="stop-time">22:00</div>
+            </div>
+            <div class="stop-content">
+              <div class="stop-name">Pub Suéltate el pelo</div>
+              <div class="stop-detail">Bar de copas con música de los 80/90 · María de Guzmán, 5<br/>Precio: lo que se gaste cada uno · Duración: lo que pida el cuerpo</div>
+              <div class="stop-chips">
+                <span class="stop-chip metro">Metro: Cuatro Caminos</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="attendees">
+          <div class="attendees-label">Asistentes confirmados</div>
+
+          <div class="attendee-group">
+            <div class="attendee-group-name">Legends (17:30)</div>
+            <div class="attendee-list">
+              <span class="attendee-pill">José Luis</span>
+              <span class="attendee-pill">Carlos</span>
+              <span class="attendee-pill">Antonio</span>
+            </div>
+          </div>
+
+          <div class="attendee-group">
+            <div class="attendee-group-name">El Recuerdo (20:30)</div>
+            <div class="attendee-list">
+              <span class="attendee-pill">Paloma y José Luis</span>
+              <span class="attendee-pill">Mónica y Carlos</span>
+              <span class="attendee-pill">José y Ana</span>
+              <span class="attendee-pill">Antonio y Lupe</span>
+              <span class="attendee-pill">Jesús y Piki</span>
+            </div>
+          </div>
+
+          <div class="attendee-group">
+            <div class="attendee-group-name">Suéltate el pelo (22:00)</div>
+            <div class="attendee-list">
+              <span class="attendee-pill">Paloma y José Luis</span>
+              <span class="attendee-pill">Mónica y Carlos</span>
+              <span class="attendee-pill">José y Ana</span>
+              <span class="attendee-pill">Antonio y Lupe</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EVENTO 2: KARAOKE ── -->
+    <div class="event-card pasada">
+      <div class="card-stripe stripe-brown"></div>
+      <div class="card-body">
+        <div class="date-badge past">Viernes 7 de marzo <span class="past-tag">Pasada</span></div>
+        <div class="card-title">Karaoke en el Palacio de Hielo</div>
+        <div class="card-subtitle">El año pasado nos lo pasamos genial, ¡repetimos!</div>
+
+        <div class="stops">
+
+          <div class="stop">
+            <div class="stop-time-col">
+              <div class="stop-time">13:30</div>
+              <div class="stop-line"></div>
+            </div>
+            <div class="stop-content">
+              <div class="stop-name">Karaoke · Palacio de Hielo</div>
+              <div class="stop-detail">Centro Comercial y Ocio · Silvano, 77 · Máximo 10 personas, reservado 8</div>
+              <div class="stop-chips">
+                <span class="stop-chip price">95 € ÷ asistentes (~10,55 €)</span>
+                <span class="stop-chip">Incluye 1 bebida</span>
+                <span class="stop-chip">1 hora</span>
+                <span class="stop-chip metro">Metro: Canillas</span>
+                <span class="stop-chip parking">Parking gratuito</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stop">
+            <div class="stop-time-col">
+              <div class="stop-time">15:15</div>
+              <div class="stop-line"></div>
+            </div>
+            <div class="stop-content">
+              <div class="stop-name">Comida en Ginos</div>
+              <div class="stop-detail">En el mismo Centro Comercial</div>
+            </div>
+          </div>
+
+          <div class="stop">
+            <div class="stop-time-col">
+              <div class="stop-time">Tarde</div>
+            </div>
+            <div class="stop-content">
+              <div class="stop-name">Dos opciones a elegir</div>
+              <div class="stop-detail">
+                A) Cine (película según cartelera)<br/>
+                B) Paseo por el Parque Juan Carlos I o El Capricho (cierra a las 18:00 h)
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="attendees">
+          <div class="attendees-label">Asistentes</div>
+
+          <div class="attendee-group">
+            <div class="attendee-group-name">Karaoke</div>
+            <div class="attendee-list">
+              <span class="attendee-pill">Paloma y José Luis</span>
+              <span class="attendee-pill">Mónica y Carlos</span>
+              <span class="attendee-pill">Ángel y Silvia</span>
+              <span class="attendee-pill">José y Ana</span>
+            </div>
+          </div>
+
+          <div class="attendee-group">
+            <div class="attendee-group-name">Ginos</div>
+            <div class="attendee-list">
+              <span class="attendee-pill">Paloma y José Luis</span>
+              <span class="attendee-pill">Mónica y Carlos</span>
+              <span class="attendee-pill">Ángel y Silvia</span>
+              <span class="attendee-pill">José y Ana</span>
+              <span class="attendee-pill">Piki y Jesús</span>
+            </div>
+          </div>
+
+          <div class="attendee-group">
+            <div class="attendee-group-name">Cine</div>
+            <div class="attendee-list">
+              <span class="attendee-pill">José y Ana María</span>
+              <span class="attendee-pill">Carlos y Mónica</span>
+              <span class="attendee-pill">José Luis y Pam</span>
+              <span class="attendee-pill">Jesús y Piki</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EVENTO 3: COLECCIONES REALES + A TODO RITMO ── -->
+    <div class="event-card pasada">
+      <div class="card-stripe stripe-purple"></div>
+      <div class="card-body">
+        <div class="date-badge past">Sábado 14 de febrero <span class="past-tag">Pasada</span></div>
+        <div class="card-title">Colecciones Reales + A Todo Ritmo</div>
+        <div class="card-subtitle">San Valentín con el grupo — cultura y espectáculo</div>
+
+        <div class="stops">
+
+          <div class="stop">
+            <div class="stop-time-col">
+              <div class="stop-time">17:00</div>
+              <div class="stop-line"></div>
+            </div>
+            <div class="stop-content">
+              <div class="stop-name">Colecciones Reales</div>
+              <div class="stop-detail">
+                Incluye exposiciones temporales y permanente
+                <br/>
+                <a href="https://tickets.patrimonionacional.es/es/tickets/516190" target="_blank">↗ Comprar entradas</a>
+              </div>
+              <div class="stop-chips">
+                <span class="stop-chip price">14,50 €/persona</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stop">
+            <div class="stop-time-col">
+              <div class="stop-time">19:30</div>
+              <div class="stop-line"></div>
+            </div>
+            <div class="stop-content">
+              <div class="stop-name">Café Manuela</div>
+              <div class="stop-detail">C/ San Vicente Ferrer, 29 · Para charlar un rato antes del espectáculo</div>
+              <div class="stop-chips">
+                <span class="stop-chip">Sin reserva · Por orden de llegada</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stop">
+            <div class="stop-time-col">
+              <div class="stop-time">21:00</div>
+            </div>
+            <div class="stop-content">
+              <div class="stop-name">A Todo Ritmo · Espacio Broadway</div>
+              <div class="stop-detail">C/ San Vicente Ferrer, 55, Madrid 28015 · Por abono teatro y Atrápalo</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="attendees">
+          <div class="attendees-label">Asistentes</div>
+          <div class="attendee-group">
+            <div class="attendee-list">
+              <span class="attendee-pill">Carlos y Mónica</span>
+              <span class="attendee-pill">Pam y José Luis</span>
+              <span class="attendee-pill">José y Ana</span>
+              <span class="attendee-pill">Ángel y Silvia</span>
+              <span class="attendee-pill">Piki y Jesús</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function filtrar(tipo, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.event-card').forEach(card => {
+        if (tipo === 'all') {
+          card.style.display = '';
+        } else {
+          card.style.display = card.classList.contains(tipo) ? '' : 'none';
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
