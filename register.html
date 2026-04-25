@@ -8,9 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
 
-  <!-- EmailJS -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>emailjs.init('x8QgN3ooQ-0vPl0IL');</script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -592,20 +589,29 @@
       btn.disabled = true;
       document.getElementById('error-box').style.display = 'none';
 
-      // Enviar con EmailJS
-      emailjs.send('service_qz1do75', '5t2vo6r', {
-        nombre1:     name1,
-        nombre2:     name2,
-        edad1:       age1,
-        edad2:       age2,
-        zona:        zone,
-        email_pareja: email,
-        descripcion: descripcion || '—'
+      // Enviar con Formspree
+      fetch('https://formspree.io/f/xwvazprg', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pareja:       name1 + ' & ' + name2,
+          nombre1:      name1,
+          nombre2:      name2,
+          edad1:        age1,
+          edad2:        age2,
+          zona:         zone,
+          email:        email,
+          descripcion:  descripcion || '—'
+        })
       })
-      .then(() => {
-        document.getElementById('form-section').style.display = 'none';
-        document.getElementById('success-email').textContent = email;
-        document.getElementById('success-screen').style.display = 'block';
+      .then(res => {
+        if (res.ok) {
+          document.getElementById('form-section').style.display = 'none';
+          document.getElementById('success-email').textContent = email;
+          document.getElementById('success-screen').style.display = 'block';
+        } else {
+          throw new Error('Error al enviar');
+        }
       })
       .catch(() => {
         showError('Ha habido un problema al enviar la solicitud. Por favor, intentadlo de nuevo.');
