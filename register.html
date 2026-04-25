@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
 
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('x8QgN3ooQ-0vPl0IL');</script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -143,7 +147,7 @@
 
     .section-label:first-of-type { margin-top: 0; }
 
-    /* GRID PARA DOS COLUMNAS */
+    /* GRID DOS COLUMNAS */
     .field-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -174,8 +178,8 @@
 
     input[type="text"],
     input[type="email"],
-    input[type="password"],
     input[type="number"],
+    textarea,
     select {
       font-family: 'Jost', sans-serif;
       font-size: 0.95rem;
@@ -191,13 +195,21 @@
       appearance: none;
     }
 
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.6;
+    }
+
     input:focus,
+    textarea:focus,
     select:focus {
       border-color: var(--blue);
       background: var(--white);
     }
 
-    input::placeholder { color: var(--text-muted); }
+    input::placeholder,
+    textarea::placeholder { color: var(--text-muted); }
 
     /* Select arrow */
     .select-wrap { position: relative; }
@@ -222,69 +234,6 @@
     .age-ok   { color: var(--success); }
     .age-warn { color: var(--error); }
 
-    /* PASSWORD toggle */
-    .pass-wrap { position: relative; }
-    .pass-wrap input { padding-right: 3rem; }
-    .pass-toggle {
-      position: absolute;
-      right: 0.85rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-family: 'Jost', sans-serif;
-      padding: 0;
-    }
-    .pass-toggle:hover { color: var(--text); }
-
-    /* ERROR MESSAGE */
-    .error-box {
-      display: none;
-      background: var(--error-bg);
-      border: 1px solid #F1C0BC;
-      border-radius: 10px;
-      padding: 0.75rem 1rem;
-      font-size: 0.82rem;
-      color: var(--error);
-      margin-bottom: 1.25rem;
-    }
-
-    /* SUBMIT */
-    .btn-submit {
-      width: 100%;
-      font-family: 'Jost', sans-serif;
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--white);
-      background: var(--blue);
-      border: none;
-      padding: 0.95rem;
-      border-radius: 12px;
-      cursor: pointer;
-      margin-top: 2rem;
-      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-      box-shadow: 0 4px 16px rgba(44,74,124,0.2);
-    }
-    .btn-submit:hover { background: var(--blue-mid); transform: translateY(-1px); }
-    .btn-submit:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
-
-    .form-footer {
-      text-align: center;
-      margin-top: 1.25rem;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-
-    .form-footer a {
-      color: var(--blue);
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .form-footer a:hover { text-decoration: underline; }
-
     /* AVISO EDAD */
     .age-warning-banner {
       display: none;
@@ -296,6 +245,18 @@
       color: var(--error);
       margin-top: 0.5rem;
       line-height: 1.5;
+    }
+
+    /* ERROR MESSAGE */
+    .error-box {
+      display: none;
+      background: var(--error-bg);
+      border: 1px solid #F1C0BC;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: var(--error);
+      margin-bottom: 1.25rem;
     }
 
     /* PRIVACY NOTE */
@@ -342,6 +303,71 @@
 
     .info-block-text:last-child { margin-bottom: 0; }
 
+    /* SUBMIT */
+    .btn-submit {
+      width: 100%;
+      font-family: 'Jost', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--white);
+      background: var(--blue);
+      border: none;
+      padding: 0.95rem;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 2rem;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(44,74,124,0.2);
+    }
+    .btn-submit:hover { background: var(--blue-mid); transform: translateY(-1px); }
+    .btn-submit:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .form-footer a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .form-footer a:hover { text-decoration: underline; }
+
+    /* PANTALLA DE ÉXITO */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 2rem 0 1rem;
+    }
+
+    .success-icon {
+      font-size: 3rem;
+      margin-bottom: 1.25rem;
+      display: block;
+    }
+
+    .success-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .success-title em { font-style: italic; color: var(--blue); }
+
+    .success-text {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
     /* RESPONSIVE */
     @media (max-width: 600px) {
       nav { padding: 1rem 1.25rem; }
@@ -360,155 +386,148 @@
   <main>
     <div class="form-card">
 
-      <div class="form-eyebrow">Únete a la comunidad</div>
-      <h1 class="form-title">Registraos como <em>pareja</em></h1>
-      <p class="form-subtitle">Rellena los datos y en dos minutos formáis parte de la comunidad de Madrid para parejas de 47 a 62 años.</p>
+      <!-- FORMULARIO -->
+      <div id="form-section">
 
-      <!-- INFO BLOQUE -->
-      <div class="info-block">
-        <div class="info-block-title">¿Cómo funciona el grupo?</div>
-        <p class="info-block-text">Las propuestas son variadas: cine, teatro, senderismo, monólogos, sesiones de magia, tapear, visitar exposiciones, salidas para conocer pueblos y ciudades... todo con buen ambiente y ganas de pasarlo bien, con la finalidad de que con el tiempo entablemos una amistad de verdad.</p>
-        <p class="info-block-text">Las actividades las propone cualquier integrante del grupo. Nos implicamos y aportamos ideas para que sea un grupo dinámico, participativo y vivo.</p>
-      </div>
+        <div class="form-eyebrow">Únete a la comunidad</div>
+        <h1 class="form-title">Solicitar <em>inscripción</em></h1>
+        <p class="form-subtitle">Rellenad los datos y os escribiremos en cuanto revisemos vuestra solicitud.</p>
 
-      <div class="error-box" id="error-box">
-        Algo ha ido mal. Por favor, revisad los datos e intentadlo de nuevo.
-      </div>
+        <!-- INFO BLOQUE -->
+        <div class="info-block">
+          <div class="info-block-title">¿Cómo funciona el grupo?</div>
+          <p class="info-block-text">Las propuestas son variadas: cine, teatro, senderismo, monólogos, sesiones de magia, tapear, visitar exposiciones, salidas para conocer pueblos y ciudades... todo con buen ambiente y ganas de pasarlo bien, con la finalidad de que con el tiempo entablemos una amistad de verdad.</p>
+          <p class="info-block-text">Las actividades las propone cualquier integrante del grupo. Nos implicamos y aportamos ideas para que sea un grupo dinámico, participativo y vivo.</p>
+        </div>
 
-      <!-- SECCIÓN 1: PAREJA -->
-      <div class="section-label"><span>Quiénes sois</span></div>
+        <div class="error-box" id="error-box"></div>
 
-      <div class="field-row">
+        <!-- SECCIÓN 1: PAREJA -->
+        <div class="section-label"><span>Quiénes sois</span></div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="name1">Nombre o apodo (persona 1)</label>
+            <input type="text" id="name1" placeholder="Ej. Miguel" maxlength="30" required />
+          </div>
+          <div class="field">
+            <label for="name2">Nombre o apodo (persona 2)</label>
+            <input type="text" id="name2" placeholder="Ej. Carmen" maxlength="30" required />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="age1">Edad (persona 1)</label>
+            <input type="number" id="age1" placeholder="Ej. 51" min="30" max="80" required oninput="checkAges()" />
+            <span class="age-note" id="age1-note"></span>
+          </div>
+          <div class="field">
+            <label for="age2">Edad (persona 2)</label>
+            <input type="number" id="age2" placeholder="Ej. 49" min="30" max="80" required oninput="checkAges()" />
+            <span class="age-note" id="age2-note"></span>
+          </div>
+        </div>
+
+        <div class="age-warning-banner" id="age-warning">
+          La comunidad está pensada para parejas con al menos uno de sus miembros entre 47 y 62 años. Si creéis que hay un error, escribidnos.
+        </div>
+
+        <!-- SECCIÓN 2: UBICACIÓN -->
+        <div class="section-label"><span>Dónde vivís</span></div>
+
         <div class="field">
-          <label for="name1">Nombre o apodo (persona 1)</label>
-          <input type="text" id="name1" placeholder="Ej. Miguel" maxlength="30" required />
+          <label for="zone">Barrio o zona de Madrid</label>
+          <div class="select-wrap">
+            <select id="zone" required>
+              <option value="" disabled selected>Selecciona vuestra zona</option>
+              <optgroup label="Madrid capital">
+                <option>Barrio de Salamanca</option>
+                <option>Chamberí</option>
+                <option>Chamartín</option>
+                <option>Retiro</option>
+                <option>Centro</option>
+                <option>Moncloa – Aravaca</option>
+                <option>Tetuán</option>
+                <option>Hortaleza</option>
+                <option>Fuencarral – El Pardo</option>
+                <option>Ciudad Lineal</option>
+                <option>Moratalaz</option>
+                <option>Latina</option>
+                <option>Carabanchel</option>
+                <option>Vallecas</option>
+                <option>Vicálvaro</option>
+                <option>San Blas – Canillejas</option>
+                <option>Barajas</option>
+                <option>Arganzuela</option>
+                <option>Usera</option>
+                <option>Puente de Vallecas</option>
+              </optgroup>
+              <optgroup label="Municipios cercanos">
+                <option>Pozuelo de Alarcón</option>
+                <option>Majadahonda</option>
+                <option>Las Rozas</option>
+                <option>Boadilla del Monte</option>
+                <option>Alcobendas</option>
+                <option>San Sebastián de los Reyes</option>
+                <option>Alcalá de Henares</option>
+                <option>Getafe</option>
+                <option>Leganés</option>
+                <option>Móstoles</option>
+                <option>Torrejón de Ardoz</option>
+                <option>Rivas-Vaciamadrid</option>
+                <option>Otra zona de la Comunidad de Madrid</option>
+              </optgroup>
+            </select>
+          </div>
         </div>
+
+        <!-- SECCIÓN 3: CONTACTO -->
+        <div class="section-label"><span>Cómo contactaros</span></div>
+
         <div class="field">
-          <label for="name2">Nombre o apodo (persona 2)</label>
-          <input type="text" id="name2" placeholder="Ej. Carmen" maxlength="30" required />
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" placeholder="vuestro@email.com" required />
+          <span class="field-hint">Os escribiremos aquí cuando revisemos vuestra solicitud.</span>
         </div>
-      </div>
 
-      <div class="field-row">
+        <!-- SECCIÓN 4: ALGO MÁS -->
+        <div class="section-label"><span>Algo más que queráis contarnos</span></div>
+
         <div class="field">
-          <label for="age1">Edad (persona 1)</label>
-          <input type="number" id="age1" placeholder="Ej. 51" min="47" max="62" required oninput="checkAges()" />
-          <span class="age-note" id="age1-note"></span>
+          <label for="descripcion">Presentación libre <span style="font-weight:300;color:var(--text-muted)">(opcional)</span></label>
+          <textarea id="descripcion" placeholder="Contadnos un poco sobre vosotros, qué os gusta hacer, qué buscáis en el grupo..."></textarea>
         </div>
-        <div class="field">
-          <label for="age2">Edad (persona 2)</label>
-          <input type="number" id="age2" placeholder="Ej. 49" min="47" max="62" required oninput="checkAges()" />
-          <span class="age-note" id="age2-note"></span>
+
+        <div class="privacy-note">
+          <span class="privacy-note-icon">🔒</span>
+          <span>Vuestros datos se usan únicamente para revisar vuestra solicitud. No los compartimos con nadie.</span>
         </div>
+
+        <button class="btn-submit" id="btn-submit" onclick="handleSubmit()">
+          Enviar solicitud
+        </button>
+
+        <p class="form-footer">
+          ¿Ya tenéis cuenta? <a href="login.html">Entrar aquí</a>
+        </p>
+
       </div>
 
-      <div class="age-warning-banner" id="age-warning">
-        La comunidad está pensada para parejas con al menos uno de sus miembros entre 47 y 62 años. Si creéis que hay un error, escribidnos.
+      <!-- PANTALLA DE ÉXITO -->
+      <div class="success-screen" id="success-screen">
+        <span class="success-icon">✉️</span>
+        <h2 class="success-title">Solicitud <em>enviada</em></h2>
+        <p class="success-text">
+          Hemos recibido vuestra solicitud. La revisaremos y os escribiremos a <strong id="success-email"></strong> en cuanto podamos.<br /><br />
+          ¡Gracias por vuestro interés en la comunidad!
+        </p>
       </div>
-
-      <!-- SECCIÓN 2: UBICACIÓN -->
-      <div class="section-label"><span>Dónde vivís</span></div>
-
-      <div class="field">
-        <label for="zone">Barrio o zona de Madrid</label>
-        <div class="select-wrap">
-          <select id="zone" required>
-            <option value="" disabled selected>Selecciona vuestra zona</option>
-            <optgroup label="Madrid capital">
-              <option>Barrio de Salamanca</option>
-              <option>Chamberí</option>
-              <option>Chamartín</option>
-              <option>Retiro</option>
-              <option>Centro</option>
-              <option>Moncloa – Aravaca</option>
-              <option>Tetuán</option>
-              <option>Hortaleza</option>
-              <option>Fuencarral – El Pardo</option>
-              <option>Ciudad Lineal</option>
-              <option>Moratalaz</option>
-              <option>Latina</option>
-              <option>Carabanchel</option>
-              <option>Vallecas</option>
-              <option>Vicálvaro</option>
-              <option>San Blas – Canillejas</option>
-              <option>Barajas</option>
-              <option>Arganzuela</option>
-              <option>Usera</option>
-              <option>Puente de Vallecas</option>
-            </optgroup>
-            <optgroup label="Municipios cercanos">
-              <option>Pozuelo de Alarcón</option>
-              <option>Majadahonda</option>
-              <option>Las Rozas</option>
-              <option>Boadilla del Monte</option>
-              <option>Alcobendas</option>
-              <option>San Sebastián de los Reyes</option>
-              <option>Alcalá de Henares</option>
-              <option>Getafe</option>
-              <option>Leganés</option>
-              <option>Móstoles</option>
-              <option>Torrejón de Ardoz</option>
-              <option>Rivas-Vaciamadrid</option>
-              <option>Otra zona de la Comunidad de Madrid</option>
-            </optgroup>
-          </select>
-        </div>
-      </div>
-
-      <!-- SECCIÓN 3: ACCESO -->
-      <div class="section-label"><span>Vuestro acceso</span></div>
-
-      <div class="field">
-        <label for="email">Correo electrónico</label>
-        <input type="email" id="email" placeholder="vuestro@email.com" required />
-        <span class="field-hint">Lo usaréis para entrar. No se muestra en el perfil.</span>
-      </div>
-
-      <div class="field">
-        <label for="password">Contraseña</label>
-        <div class="pass-wrap">
-          <input type="password" id="password" placeholder="Mínimo 8 caracteres" minlength="8" required />
-          <button type="button" class="pass-toggle" onclick="togglePass('password', this)">ver</button>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="password2">Repite la contraseña</label>
-        <div class="pass-wrap">
-          <input type="password" id="password2" placeholder="Repite la contraseña" minlength="8" required />
-          <button type="button" class="pass-toggle" onclick="togglePass('password2', this)">ver</button>
-        </div>
-      </div>
-
-      <div class="privacy-note">
-        <span class="privacy-note-icon">🔒</span>
-        <span>Vuestros datos son privados y solo visibles para los miembros de la comunidad. No compartimos nada con terceros.</span>
-      </div>
-
-      <button class="btn-submit" id="btn-submit" onclick="handleSubmit()">
-        Solicitar inscripción
-      </button>
-
-      <p class="form-footer">
-        ¿Ya tenéis cuenta? <a href="login.html">Entrar aquí</a>
-      </p>
 
     </div>
   </main>
 
   <script>
-    // Toggle contraseña visible/oculta
-    function togglePass(id, btn) {
-      const input = document.getElementById(id);
-      if (input.type === 'password') {
-        input.type = 'text';
-        btn.textContent = 'ocultar';
-      } else {
-        input.type = 'password';
-        btn.textContent = 'ver';
-      }
-    }
-
     // Validación de edades en tiempo real
     function checkAges() {
       const age1 = parseInt(document.getElementById('age1').value);
@@ -545,63 +564,54 @@
         note2.textContent = '';
       }
 
-      // Mostrar aviso si los dos están fuera de rango
       const bothFilled = !isNaN(age1) && !isNaN(age2);
       warning.style.display = (bothFilled && outOfRange === 2) ? 'block' : 'none';
     }
 
-    // Validación y envío
+    // Envío del formulario
     function handleSubmit() {
-      const name1    = document.getElementById('name1').value.trim();
-      const name2    = document.getElementById('name2').value.trim();
-      const age1     = parseInt(document.getElementById('age1').value);
-      const age2     = parseInt(document.getElementById('age2').value);
-      const zone     = document.getElementById('zone').value;
-      const email    = document.getElementById('email').value.trim();
-      const pass     = document.getElementById('password').value;
-      const pass2    = document.getElementById('password2').value;
-      const errorBox = document.getElementById('error-box');
-      const btn      = document.getElementById('btn-submit');
-
-      errorBox.style.display = 'none';
+      const name1       = document.getElementById('name1').value.trim();
+      const name2       = document.getElementById('name2').value.trim();
+      const age1        = parseInt(document.getElementById('age1').value);
+      const age2        = parseInt(document.getElementById('age2').value);
+      const zone        = document.getElementById('zone').value;
+      const email       = document.getElementById('email').value.trim();
+      const descripcion = document.getElementById('descripcion').value.trim();
+      const btn         = document.getElementById('btn-submit');
 
       // Validaciones
-      if (!name1 || !name2) {
-        return showError('Por favor, indicad el nombre de los dos.');
-      }
-
-      if (isNaN(age1) || isNaN(age2)) {
-        return showError('Por favor, indicad la edad de los dos.');
-      }
-
+      if (!name1 || !name2) return showError('Por favor, indicad el nombre de los dos.');
+      if (isNaN(age1) || isNaN(age2)) return showError('Por favor, indicad la edad de los dos.');
       if ((age1 < 47 || age1 > 62) && (age2 < 47 || age2 > 62)) {
         return showError('Al menos uno de vosotros debe tener entre 47 y 62 años para unirse a la comunidad.');
       }
+      if (!zone) return showError('Por favor, seleccionad vuestra zona de Madrid.');
+      if (!email || !email.includes('@')) return showError('Por favor, introducid un correo electrónico válido.');
 
-      if (!zone) {
-        return showError('Por favor, seleccionad vuestra zona de Madrid.');
-      }
-
-      if (!email || !email.includes('@')) {
-        return showError('Por favor, introducid un correo electrónico válido.');
-      }
-
-      if (pass.length < 8) {
-        return showError('La contraseña debe tener al menos 8 caracteres.');
-      }
-
-      if (pass !== pass2) {
-        return showError('Las contraseñas no coinciden. Comprobadlo.');
-      }
-
-      // TODO: Conectar con Firebase Auth y Firestore
       btn.textContent = 'Enviando...';
       btn.disabled = true;
+      document.getElementById('error-box').style.display = 'none';
 
-      // Simulación (quitar cuando se conecte Firebase)
-      setTimeout(() => {
-        window.location.href = 'onboarding.html';
-      }, 1200);
+      // Enviar con EmailJS
+      emailjs.send('service_qz1do75', '5t2vo6r', {
+        nombre1:     name1,
+        nombre2:     name2,
+        edad1:       age1,
+        edad2:       age2,
+        zona:        zone,
+        email_pareja: email,
+        descripcion: descripcion || '—'
+      })
+      .then(() => {
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('success-email').textContent = email;
+        document.getElementById('success-screen').style.display = 'block';
+      })
+      .catch(() => {
+        showError('Ha habido un problema al enviar la solicitud. Por favor, intentadlo de nuevo.');
+        btn.textContent = 'Enviar solicitud';
+        btn.disabled = false;
+      });
     }
 
     function showError(msg) {
