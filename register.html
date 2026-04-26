@@ -427,7 +427,7 @@
         </div>
 
         <div class="age-warning-banner" id="age-warning">
-          La comunidad está pensada para parejas con al menos uno de sus miembros entre 47 y 62 años. Si creéis que hay un error, escribidnos.
+          La comunidad está pensada para parejas con al menos uno de sus miembros entre 47 y 60 años. Si creéis que hay un error, escribidnos.
         </div>
 
         <!-- SECCIÓN 2: UBICACIÓN -->
@@ -536,11 +536,11 @@
       let outOfRange = 0;
 
       if (!isNaN(age1)) {
-        if (age1 >= 47 && age1 <= 62) {
+        if (age1 >= 47 && age1 <= 60) {
           note1.textContent = '✓ Edad válida';
           note1.className = 'age-note age-ok';
         } else {
-          note1.textContent = 'Fuera del rango 47–62';
+          note1.textContent = 'Fuera del rango 47–60';
           note1.className = 'age-note age-warn';
           outOfRange++;
         }
@@ -549,11 +549,11 @@
       }
 
       if (!isNaN(age2)) {
-        if (age2 >= 47 && age2 <= 62) {
+        if (age2 >= 47 && age2 <= 60) {
           note2.textContent = '✓ Edad válida';
           note2.className = 'age-note age-ok';
         } else {
-          note2.textContent = 'Fuera del rango 47–62';
+          note2.textContent = 'Fuera del rango 47–60';
           note2.className = 'age-note age-warn';
           outOfRange++;
         }
@@ -579,8 +579,8 @@
       // Validaciones
       if (!name1 || !name2) return showError('Por favor, indicad el nombre de los dos.');
       if (isNaN(age1) || isNaN(age2)) return showError('Por favor, indicad la edad de los dos.');
-      if ((age1 < 47 || age1 > 62) && (age2 < 47 || age2 > 62)) {
-        return showError('Al menos uno de vosotros debe tener entre 47 y 62 años para unirse a la comunidad.');
+      if ((age1 < 47 || age1 > 60) && (age2 < 47 || age2 > 60)) {
+        return showError('Al menos uno de vosotros debe tener entre 47 y 60 años para unirse a la comunidad.');
       }
       if (!zone) return showError('Por favor, seleccionad vuestra zona de Madrid.');
       if (!email || !email.includes('@')) return showError('Por favor, introducid un correo electrónico válido.');
